@@ -177,62 +177,74 @@
 // //model
 // let Data = mongoose.model('database',newSchema)
 
+
+
+
+
+const dotenv = require('dotenv').config();
+const PORT = process.env.PORT;
+const URL = process.env.URL;
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect("mongodb+srv://sivam1:sivam@cluster0.ay9q8jt.mongodb.net/data")
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error("MongoDB Connection Error:", err));
-
-// Schema Definition
-const newSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  amount: Number
-});
-
-// Model
-const Data = mongoose.model('datas', newSchema);
-
-// Routes
 app.get('/', (req, res) => {
-  res.send("<h1>Welcome</h1>");
+    res.setHeader("Access-Control-Allow-Credentials","true");
+    res.send("<h1>Welcome</h1>");
 });
 
-app.get('/data', (req, res) => {
-  Data.find()
-    .then(items => res.json(items))
-    .catch(err => res.status(400).json({ error: err }));
-});
+app.get('/data',function(req,res){
+    Data.find().then((item)=>res.send(item))
+})
 
-app.post('/create', (req, res) => {
-  Data.create(req.body)
-    .then(item => res.json(item))
-    .catch(err => res.status(400).json({ error: err }));
-});
+app.post('/create',function(req,res){
+    Data.create(req.body).then((item)=>res.send(item))
+})
 
-app.put('/update/:id', (req, res) => {
-  Data.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    .then(item => res.json(item))
-    .catch(err => res.status(400).json({ error: err }));
-});
+app.put('/update/:id',function(req,res){
+    Data.findByIdAndUpdate({_id:req.params.id},req.body,{new:"true"}).then((item)=>res.send(item))
+})
 
-app.delete('/delete/:id', (req, res) => {
-  Data.findByIdAndDelete({ _id: req.params.id })
-    .then(item => res.json(item))
-    .catch(err => res.status(400).json({ error: err }));
-});
+app.delete('/delete/:id',function(req,res){
+    Data.findByIdAndDelete({_id:req.params.id}).then((item)=>res.send(item))
+})
 
-// Start server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server started on port 8080`));
+app.listen(PORT,()=>console.log("Server Started on port number 8080"));
+
+mongoose.connect(URL).then(()=>console.log("MongoDB Connected"))
+
+//create a schema
+
+var newSchema = new mongoose.Schema({
+    name:String,
+    email:String,
+    password:String,
+    amount:Number
+})
+
+//model
+let Data = mongoose.model('database',newSchema)
+
+//create a data for testing
+
+// let data1 = new Data({
+//     name:"Dheerka Dharshini",
+//     email:"sdheerkadharshini@gmail.com",
+//     password:"sdheerka",
+//     amount:2000
+// })
+
+// //save the data
+// data1.save()
+
+
+
+
+
+
+
